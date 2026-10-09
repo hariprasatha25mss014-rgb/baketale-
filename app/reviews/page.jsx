@@ -52,7 +52,13 @@ function FeedbackContent() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          setReviews(parsed);
+          const cleaned = parsed.filter(r =>
+            r && r.name &&
+            !r.name.toLowerCase().includes('sample') &&
+            !r.name.toLowerCase().includes('aarav') &&
+            !r.name.toLowerCase().includes('test')
+          );
+          setReviews(cleaned);
         }
       }
     } catch { }
