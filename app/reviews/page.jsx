@@ -47,21 +47,11 @@ function FeedbackContent() {
   });
 
   useEffect(() => {
+    // Start completely fresh: wipe all old feedback data
     try {
-      const saved = localStorage.getItem('baketale-polaroid-reviews');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          const cleaned = parsed.filter(r =>
-            r && r.name &&
-            !r.name.toLowerCase().includes('sample') &&
-            !r.name.toLowerCase().includes('aarav') &&
-            !r.name.toLowerCase().includes('test')
-          );
-          setReviews(cleaned);
-        }
-      }
+      localStorage.removeItem('baketale-polaroid-reviews');
     } catch { }
+    setReviews([]);
 
     if (typeof window !== 'undefined' && window.location.search.includes('write=true')) {
       setShowModal(true);
