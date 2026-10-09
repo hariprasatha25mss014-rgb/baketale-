@@ -1,0 +1,34 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js build
+/.next/
+/out/
+/build
+
+# environment & secrets
+.env
+.env*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# agent & skills cache
+.agent/
+.agents/
+skills-lock.json
+
+# temporary files & scratch
+*.tmp
+*.mp4
+*.log
+design-sample.png
+ui-samples/

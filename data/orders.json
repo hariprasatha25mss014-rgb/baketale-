@@ -1,0 +1,69 @@
+[
+  {
+    "id": "#BT-8072",
+    "customer": {
+      "name": "Hari prasath",
+      "address": "sulur",
+      "instagramHandle": "harii.i_14",
+      "note": "hi",
+      "ip": "::1"
+    },
+    "items": [
+      {
+        "id": "double-250",
+        "name": "Double Chocolate Brownies",
+        "detail": "250 g",
+        "price": 275,
+        "qty": 1,
+        "itemTotal": 275,
+        "img": "/assets/brownies/classic.webp"
+      }
+    ],
+    "subtotal": 275,
+    "currency": "INR",
+    "status": "pending_instagram",
+    "createdAt": "2026-10-09T13:09:45.911Z",
+    "updatedAt": "2026-10-09T13:09:45.911Z",
+    "dateStr": "9 Oct 2026",
+    "receiptText": "✨ NEW BAKETALE ORDER • #BT-8072\nDate: 9 Oct 2026\n------------------------------------\n👤 Customer: Hari prasath\n📱 Instagram: @harii.i_14\n📍 Delivery Address: sulur\n📝 Special Note: hi\n------------------------------------\n📦 Order Items:\n  • 1 × Double Chocolate Brownies (250 g) — ₹275\n------------------------------------\n💰 Subtotal: ₹275\n🚚 Shipping: Calculated on Instagram based on delivery address\n------------------------------------\n💬 Direct Confirmation to @baketalee on Instagram. We look forward to baking for you! ♡",
+    "instagramDmUrl": "https://www.instagram.com/direct/t/18142251448547150/"
+  },
+  {
+    "id": "#BT-9164",
+    "customer": {
+      "name": "Priya Sharma",
+      "address": "42 Richmond Road, Bengaluru 560025",
+      "instagramHandle": "priya_bakes",
+      "note": "Please pack with extra butter paper",
+      "ip": "::1"
+    },
+    "items": [
+      {
+        "id": "lotus-500",
+        "name": "Lotus Biscoff Brownies",
+        "detail": "500 g",
+        "price": 650,
+        "qty": 1,
+        "itemTotal": 650,
+        "img": null
+      },
+      {
+        "id": "classic-250",
+        "name": "Classic Chocolate Brownies",
+        "detail": "250 g",
+        "price": 250,
+        "qty": 2,
+        "itemTotal": 500,
+        "img": null
+      }
+    ],
+    "subtotal": 1150,
+    "currency": "INR",
+    "status": "pending_instagram",
+    "createdAt": "2026-10-08T14:20:44.127Z",
+    "updatedAt": "2026-10-08T14:20:44.127Z",
+    "dateStr": "8 Oct 2026",
+    "receiptText": "✨ NEW BAKETALE ORDER • #BT-9164\nDate: 8 Oct 2026\n------------------------------------\n👤 Customer: Priya Sharma\n📱 Instagram: @priya_bakes\n📍 Delivery Address: 42 Richmond Road, Bengaluru 560025\n📝 Special Note: Please pack with extra butter paper\n------------------------------------\n📦 Order Items:\n  • 1 × Lotus Biscoff Brownies (500 g) — ₹650\n  • 2 × Classic Chocolate Brownies (250 g) — ₹500\n------------------------------------\n💰 Subtotal: ₹1,150\n🚚 Shipping: Calculated on Instagram based on delivery address\n------------------------------------\n💬 Direct Confirmation to @baketale on Instagram. We look forward to baking for you! ♡",
+    "instagramDmUrl": "https://ig.me/m/baketale"
+  }
+]
