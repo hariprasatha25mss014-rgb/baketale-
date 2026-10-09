@@ -14,7 +14,7 @@ export const FLAVOURS = [
     name: 'Classic Chocolate',
     watermark: 'FUDGE',
     img: '/assets/brownies/classic.webp',
-    bg: '#fbf5ed',
+    bg: '#f7f2eb',
     ink: '#261107',
     ringColor: 'rgba(184, 91, 43, 0.22)',
     watermarkColor: '#d9a35f'
@@ -73,7 +73,6 @@ export default function Hero() {
   const [dir, setDir] = useState(1);
   const n = FLAVOURS.length;
 
-  // Kinetic ScrollTrigger Flavour Switching with inertia smoothing
   useEffect(() => {
     const wrapEl = wrapRef.current;
     const heroEl = heroRef.current;
@@ -89,7 +88,6 @@ export default function Hero() {
         scrub: 0.8,
         onUpdate: (self) => {
           if (isClickJumpingRef.current) return;
-          // Calibrated progress pacing across 5 flavours
           const rawProgress = self.progress;
           const targetIdx = Math.min(n - 1, Math.max(0, Math.floor(rawProgress * n)));
           
@@ -125,7 +123,6 @@ export default function Hero() {
     jump(nextIdx);
   };
 
-  // Keyboard accessibility
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -162,26 +159,25 @@ export default function Hero() {
       >
         <div className="hero-noise" aria-hidden="true" />
 
-        {/* Hero Left: Copy matching exact design */}
+        {/* Hero Left: Original Cream Background & Dark Brown Typography */}
         <div className="hero-copy">
-          <h1 className="reveal">
+          <h1 className="reveal" style={{ color: '#261107' }}>
             A story<br />
-            <i>in every</i><br />
+            <i style={{ color: '#c8833e', fontStyle: 'italic' }}>in every</i><br />
             bite.
           </h1>
 
-          <p className="hero-lede reveal">
+          <p className="hero-lede reveal" style={{ color: '#735345' }}>
             Fudgy brownies made slowly, obsessively and with enough chocolate to make you forget the rest of the internet exists.
           </p>
 
-          <a href="#flavours" className="bt-pill reveal">
+          <a href="#flavours" className="bt-pill reveal" style={{ background: '#261107', color: '#fbf5ed' }}>
             Explore the flavours <span>↓</span>
           </a>
         </div>
 
-        {/* Hero Right: 3D Brownie Stage with Framer Motion spring kinematics & scroll trigger */}
+        {/* Hero Right: Visible Floating 3D Brownie Stage */}
         <div className="hero-art">
-          {/* Concentric Circular Backdrop Ring */}
           <motion.div
             className="hero-ring"
             animate={{
@@ -191,7 +187,6 @@ export default function Hero() {
             aria-hidden="true"
           />
 
-          {/* Floating Brownie Image with Framer Motion Spring Kinematics */}
           <div
             className="hero-art__product-wrap"
             onClick={nextFlavour}
@@ -202,7 +197,7 @@ export default function Hero() {
               if (e.key === 'Enter' || e.key === ' ') nextFlavour();
             }}
             aria-label={`Current flavour: ${f.name}. Click to view next flavour.`}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', zIndex: 10, display: 'grid', placeItems: 'center' }}
           >
             <AnimatePresence mode="popLayout" custom={dir}>
               <motion.div
@@ -210,11 +205,11 @@ export default function Hero() {
                 className="hero-art__motion-card"
                 custom={dir}
                 initial={{
-                  opacity: 0,
-                  y: 42 * dir,
-                  scale: 0.84,
-                  rotate: 7 * dir,
-                  filter: 'blur(10px)'
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  rotate: -5,
+                  filter: 'blur(0px)'
                 }}
                 animate={{
                   opacity: 1,
@@ -225,44 +220,43 @@ export default function Hero() {
                 }}
                 exit={{
                   opacity: 0,
-                  y: -32 * dir,
-                  scale: 0.84,
+                  y: -20 * dir,
+                  scale: 0.88,
                   rotate: -7 * dir,
-                  filter: 'blur(10px)'
+                  filter: 'blur(6px)'
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 130,
-                  damping: 18,
-                  mass: 0.8
+                  stiffness: 140,
+                  damping: 18
                 }}
               >
                 <motion.img
                   src={f.img}
                   alt={`${f.name} artisanal brownie`}
+                  style={{ width: '85%', maxWidth: '420px', height: 'auto', display: 'block', margin: '0 auto', filter: 'drop-shadow(0 20px 30px rgba(31, 12, 5, 0.25))' }}
                   animate={{
-                    y: [0, -10, 0],
-                    rotate: [-5, -3.2, -5]
+                    y: [0, -12, 0],
+                    rotate: [-5, -3, -5]
                   }}
                   transition={{
-                    y: { duration: 4.8, repeat: Infinity, ease: 'easeInOut' },
-                    rotate: { duration: 5.4, repeat: Infinity, ease: 'easeInOut' }
+                    y: { duration: 4.5, repeat: Infinity, ease: 'easeInOut' },
+                    rotate: { duration: 5.2, repeat: Infinity, ease: 'easeInOut' }
                   }}
                 />
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Dynamic Watermark Text behind Brownie */}
           <AnimatePresence mode="wait" custom={dir}>
             <motion.div
               key={idx}
               className="hero-giant"
               style={{ color: f.watermarkColor }}
               custom={dir}
-              initial={{ opacity: 0, scale: 0.92, y: 18 * dir }}
-              animate={{ opacity: 0.14, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 1.05, y: -18 * dir }}
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 0.16, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
               aria-hidden="true"
             >
@@ -271,9 +265,9 @@ export default function Hero() {
           </AnimatePresence>
         </div>
 
-        {/* Step Indicator dots at bottom right */}
+        {/* Step Indicator dots */}
         <div className="hero-progress-dots" style={{ position: 'absolute', bottom: '32px', right: '5vw', zIndex: 10, display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', opacity: 0.6, marginRight: '6px' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', opacity: 0.8, color: '#261107', marginRight: '6px' }}>
             0{idx + 1} / 0{n}
           </span>
           {FLAVOURS.map((item, i) => (
@@ -286,7 +280,7 @@ export default function Hero() {
                 height: '8px',
                 borderRadius: '999px',
                 border: 'none',
-                background: i === idx ? f.ink : 'rgba(27, 16, 11, 0.25)',
+                background: i === idx ? '#261107' : 'rgba(38, 17, 7, 0.25)',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease'
               }}
@@ -294,8 +288,7 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Vertical Scroll Indicator on Right Edge */}
-        <div className="hero-side" aria-hidden="true">
+        <div className="hero-side" aria-hidden="true" style={{ color: '#261107' }}>
           SCROLL TO TASTE <span>↓</span>
         </div>
       </motion.section>

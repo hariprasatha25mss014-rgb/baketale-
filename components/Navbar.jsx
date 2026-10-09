@@ -35,12 +35,10 @@ export default function Navbar() {
 
         {/* Right Side Action Area */}
         <div className="bt-nav-right">
-          {/* Moved WRITE A REVIEW to right action section */}
           <Link href="/reviews?write=true" className="bt-nav-highlight">
             WRITE A REVIEW
           </Link>
 
-          {/* Instagram Icon ONLY */}
           <a
             href={INSTAGRAM_URL}
             target="_blank"
@@ -56,7 +54,6 @@ export default function Navbar() {
             </svg>
           </a>
 
-          {/* Bag Button */}
           <button
             className="bt-cart"
             onClick={() => setOpen(true)}
@@ -65,7 +62,6 @@ export default function Navbar() {
             BAG <span className="bt-cart-count">{String(count).padStart(2, '0')}</span>
           </button>
 
-          {/* Mobile Toggle */}
           <button
             className="bt-mobile-toggle"
             onClick={() => setMobileOpen(!mobileOpen)}

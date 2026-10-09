@@ -50,10 +50,7 @@ function MenuPageContent() {
                 <motion.article
                   key={f.id}
                   className={`menu-card ${f.premium ? 'menu-card--premium' : ''}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
+                  initial={{ opacity: 1, y: 0 }}
                   whileHover={{ y: -8, transition: { duration: 0.25 } }}
                 >
                   <div className="menu-card__image-box">
