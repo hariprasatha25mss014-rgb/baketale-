@@ -710,7 +710,6 @@ export function Nav() {
           <a href="/#story">Our Story</a>
           <a href="/#box">Build a Box</a>
           <a href="/reviews">Polaroid Reviews</a>
-          <a href="/#faq">FAQ</a>
         </nav>
 
         <div className="nav__actions">
@@ -802,8 +801,7 @@ export function Nav() {
                   ['anatomy', 'Anatomy', 'Deconstructed 3D layers'],
                   ['specials', 'Specials & Cakes', 'Bento & celebration cakes'],
                   ['box', 'Build a Box · ₹150', '3 pieces custom curation'],
-                  ['gallery', 'Gallery', 'Handcrafted crinkle moments'],
-                  ['faq', 'FAQ', 'Orders, shipping & care']
+                  ['gallery', 'Gallery', 'Handcrafted crinkle moments']
                 ].map(([h, l, sub]) => (
                   <a
                     key={h}

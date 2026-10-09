@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Smooth from '../../components/Smooth';
 import { CartProvider } from '../../components/Cart';
 import Navbar from '../../components/Navbar';
-import { Footer } from '../../components/Sections';
+import Footer from '../../components/Footer';
 
 const INITIAL_REVIEWS = [];
 
@@ -34,6 +34,9 @@ function FeedbackContent() {
   const [showModal, setShowModal] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
   const [toast, setToast] = useState('');
+  const [customPhoto, setCustomPhoto] = useState(null);
+  const fileInputRef = useRef(null);
+
   const [form, setForm] = useState({
     name: '',
     city: '',
@@ -65,11 +68,44 @@ function FeedbackContent() {
     return () => clearTimeout(t);
   }, [toast]);
 
+  const handleCustomImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Please choose an image under 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result;
+      if (typeof result === 'string') {
+        setCustomPhoto(result);
+        setForm(prev => ({
+          ...prev,
+          photo: result
+        }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeCustomPhoto = () => {
+    setCustomPhoto(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    const defaultOption = FLAVOUR_OPTIONS.find(f => f.name === form.flavour) || FLAVOUR_OPTIONS[0];
+    setForm(prev => ({
+      ...prev,
+      photo: defaultOption.img
+    }));
+  };
+
   const selectFlavour = (flavourName, imgPath) => {
     setForm(prev => ({
       ...prev,
       flavour: flavourName,
-      photo: imgPath
+      photo: customPhoto || imgPath
     }));
   };
 
@@ -98,6 +134,8 @@ function FeedbackContent() {
 
     setShowModal(false);
     setToast('✨ Your story has been pinned to the Wall of Fudgy Moments!');
+    setCustomPhoto(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setForm({
       name: '',
       city: '',
@@ -161,142 +199,113 @@ function FeedbackContent() {
           </div>
         </section>
 
-        {/* Filter Pills Tabs */}
-        {reviews.length > 0 && (
-          <section className="feedback-filter-section">
-            <div className="feedback-filter-wrap">
-              <span className="filter-lbl">Filter by Flavour:</span>
-              <div className="filter-pills">
-                {FLAVOUR_FILTERS.map((f) => (
-                  <button
-                    key={f}
-                    className={`filter-pill ${activeFilter === f ? 'is-active' : ''}`}
-                    onClick={() => setActiveFilter(f)}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
+        {/* Filter Pills Bar */}
+        <section className="feedback-filter-section">
+          <div className="feedback-filter-wrap">
+            <span className="filter-lbl">Filter by Flavour:</span>
+            <div className="filter-pills">
+              {FLAVOUR_FILTERS.map((filter) => (
+                <button
+                  key={filter}
+                  className={`filter-pill ${activeFilter === filter ? 'is-active' : ''}`}
+                  onClick={() => setActiveFilter(filter)}
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
-        {/* Polaroid Review Cards Grid or Empty State */}
+        {/* Polaroid Memory Wall Gallery */}
         <section className="feedback-grid-section">
           {filteredReviews.length === 0 ? (
-            <div className="feedback-empty-state">
-              <div className="empty-state-icon">✦</div>
-              <h3>No Customer Stories Pinned Yet</h3>
-              <p>Be the very first brownie connoisseur to share your story &amp; pin a polaroid moment on our wall!</p>
-              <button className="btn btn--solid btn--insta-glow" onClick={() => setShowModal(true)}>
-                Write the First Review ✍
+            <div className="feedback-empty">
+              <div className="feedback-empty__icon">📸</div>
+              <h3>No polaroid stories pinned yet</h3>
+              <p>Be the first to taste our handcrafted brownies and share your photo on the wall!</p>
+              <button className="btn btn--solid btn--insta" onClick={() => setShowModal(true)}>
+                Pin The First Story ✍
               </button>
             </div>
           ) : (
             <div className="feedback-grid">
-              <AnimatePresence mode="popLayout">
-                {filteredReviews.map((r) => (
-                  <motion.article
-                    key={r.id}
-                    className="polaroid-card-v2"
-                    style={{ transform: `rotate(${r.rotate || 0}deg)` }}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    whileHover={{ scale: 1.04, rotate: 0, zIndex: 10 }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    {/* Tape / Pin Sticker */}
-                    <div className="polaroid-card-v2__tape" style={{ backgroundColor: r.pinColor || '#d99f46' }} />
+              {filteredReviews.map((r, i) => (
+                <motion.article
+                  key={r.id || i}
+                  className="polaroid-card"
+                  style={{
+                    '--pin-color': r.pinColor || '#d99f46',
+                    '--card-rotate': `${r.rotate || 0}deg`
+                  }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  whileHover={{ scale: 1.03, rotate: 0, zIndex: 10 }}
+                >
+                  <div className="polaroid-pin" />
 
-                    {/* Photo Frame */}
-                    <div className="polaroid-card-v2__photo">
-                      <img src={r.photo} alt={r.flavour} />
-                      <span className="polaroid-card-v2__flavour-badge">{r.flavour}</span>
+                  <div className="polaroid-photo-frame">
+                    <img src={r.photo || '/assets/brownies/nutella.webp'} alt={r.flavour} />
+                    <span className="polaroid-badge">{r.flavour}</span>
+                  </div>
+
+                  <div className="polaroid-caption">
+                    <div className="polaroid-stars">
+                      {'★'.repeat(r.rating || 5)}
                     </div>
-
-                    {/* Body Content */}
-                    <div className="polaroid-card-v2__body">
-                      <div className="polaroid-card-v2__stars">
-                        {'★'.repeat(r.rating || 5)}
-                      </div>
-
-                      <p className="polaroid-card-v2__quote">
-                        “{r.quote}”
-                      </p>
-
-                      <div className="polaroid-card-v2__footer">
-                        <strong>— {r.name}</strong>
-                        <small>{r.city} · {r.date}</small>
-                      </div>
-                    </div>
-                  </motion.article>
-                ))}
-              </AnimatePresence>
+                    <blockquote className="polaroid-quote">
+                      “{r.quote}”
+                    </blockquote>
+                    <footer className="polaroid-author">
+                      <strong>— {r.name}</strong>
+                      <small>{r.city} · {r.date}</small>
+                    </footer>
+                  </div>
+                </motion.article>
+              ))}
             </div>
           )}
         </section>
 
-        {/* High-End Split Modal for Submitting New Review */}
+        {/* Floating Write Review Modal with Custom Image Upload Option */}
         <AnimatePresence>
           {showModal && (
-            <div className="modal-backdrop" onClick={() => setShowModal(false)}>
+            <div className="feedback-modal-scrim">
               <motion.div
-                className="confirm-modal write-review-modal"
-                initial={{ opacity: 0, scale: 0.92, y: 24 }}
+                className="feedback-modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowModal(false)}
+              />
+
+              <motion.div
+                className="feedback-modal"
+                initial={{ opacity: 0, scale: 0.92, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.92, y: 24 }}
-                onClick={(e) => e.stopPropagation()}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.25 }}
               >
-                <div className="confirm-modal__header">
-                  <span className="confirm-modal__badge">✨ LIVE POLAROID STUDIO</span>
-                  <button className="confirm-modal__close" onClick={() => setShowModal(false)}>✕</button>
+                <div className="feedback-modal__head">
+                  <div>
+                    <span className="eyebrow" style={{ color: '#d99f46' }}>SHARE YOUR EXPERIENCE</span>
+                    <h2>Pin Your <i>Polaroid Memory</i></h2>
+                  </div>
+                  <button className="feedback-modal__close" onClick={() => setShowModal(false)} aria-label="Close modal">
+                    ✕
+                  </button>
                 </div>
 
-                <div className="write-review-split">
-                  {/* Left Column: Live Polaroid Card Preview */}
-                  <div className="review-preview-side">
-                    <div className="preview-header-tag">
-                      <span>✦ LIVE REALTIME PREVIEW ✦</span>
-                    </div>
-
-                    <div className="polaroid-card-v2 preview-polaroid">
-                      <div className="polaroid-card-v2__tape" style={{ backgroundColor: '#d99f46' }} />
-                      <div className="polaroid-card-v2__photo">
-                        <img src={form.photo} alt={form.flavour} />
-                        <span className="polaroid-card-v2__flavour-badge">{form.flavour}</span>
-                      </div>
-                      <div className="polaroid-card-v2__body">
-                        <div className="polaroid-card-v2__stars">
-                          {'★'.repeat(form.rating)}
-                        </div>
-                        <p className="polaroid-card-v2__quote">
-                          “{form.quote.trim() || 'Your brownie review or story will appear here in real-time as you type...' }”
-                        </p>
-                        <div className="polaroid-card-v2__footer">
-                          <strong>— {form.name.trim() || 'Your Name'}</strong>
-                          <small>{form.city.trim() || 'Your City'} · Just now</small>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="preview-hint">This is how your polaroid will look when pinned to the Wall.</p>
-                  </div>
-
-                  {/* Right Column: Clean Submission Form */}
-                  <form onSubmit={handleSubmit} className="review-form-side">
-                    <div className="form-head">
-                      <h3>Share Your Baketale Story</h3>
-                      <p className="form-sub">Pin your review and unboxing moment onto our wall.</p>
-                    </div>
-
-                    <div className="form-row-2">
+                <div className="feedback-modal__body">
+                  <form onSubmit={handleSubmit} className="feedback-form">
+                    <div className="form-row">
                       <div className="form-group">
                         <label>Your Name *</label>
                         <input
                           type="text"
                           required
-                          placeholder="e.g. Aarav Sharma"
+                          placeholder="e.g. Priya Sharma"
                           value={form.name}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
                         />
@@ -313,15 +322,90 @@ function FeedbackContent() {
                       </div>
                     </div>
 
-                    {/* Flavour Selector Chips */}
+                    {/* Custom Image Upload Option */}
                     <div className="form-group">
-                      <label>Select Flavour Cravings *</label>
+                      <label>Photo * (Upload your brownie photo or choose a flavour)</label>
+                      <div
+                        style={{
+                          border: '2px dashed rgba(184, 91, 43, 0.35)',
+                          borderRadius: '16px',
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.6)',
+                          marginBottom: '14px',
+                          textAlign: 'center'
+                        }}
+                      >
+                        {customPhoto ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center' }}>
+                            <img
+                              src={customPhoto}
+                              alt="Uploaded brownie preview"
+                              style={{ width: '64px', height: '64px', borderRadius: '10px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                            />
+                            <div style={{ textAlign: 'left' }}>
+                              <b style={{ display: 'block', fontSize: '0.85rem', color: '#261107' }}>Custom Photo Attached ✓</b>
+                              <button
+                                type="button"
+                                onClick={removeCustomPhoto}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  color: '#dc2743',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  padding: '4px 0'
+                                }}
+                              >
+                                Remove custom photo ✕
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              id="custom-image-upload"
+                              accept="image/*"
+                              onChange={handleCustomImageUpload}
+                              style={{ display: 'none' }}
+                            />
+                            <label
+                              htmlFor="custom-image-upload"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '10px 18px',
+                                background: '#261107',
+                                color: '#ffffff',
+                                borderRadius: '999px',
+                                fontSize: '0.8rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                transition: 'transform 0.2s ease'
+                              }}
+                            >
+                              <span>📷 Upload Your Brownie Photo</span>
+                            </label>
+                            <p style={{ margin: '8px 0 0', fontSize: '0.72rem', color: '#735345', opacity: 0.8 }}>
+                              Attach an image from your device (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Preset Flavour Selector Chips */}
+                      <span style={{ fontSize: '0.76rem', fontWeight: 700, color: '#735345', display: 'block', marginBottom: '8px' }}>
+                        Or select preset flavour brownie:
+                      </span>
                       <div className="flavour-chip-grid">
                         {FLAVOUR_OPTIONS.map((f) => (
                           <button
                             type="button"
                             key={f.name}
-                            className={`flavour-chip ${form.flavour === f.name ? 'is-selected' : ''}`}
+                            className={`flavour-chip ${form.flavour === f.name && !customPhoto ? 'is-selected' : ''}`}
                             onClick={() => selectFlavour(f.name, f.img)}
                           >
                             <img src={f.img} alt={f.name} className="flavour-chip__thumb" />
